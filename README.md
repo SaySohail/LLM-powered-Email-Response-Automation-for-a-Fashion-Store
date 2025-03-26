@@ -7,6 +7,7 @@ This project automates the classification and handling of customer emails in a f
 
 ---
 
+![Alt Text](images/email-processing.png)
 
 
 
