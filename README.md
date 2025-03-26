@@ -7,7 +7,7 @@ This project automates the classification and handling of customer emails in a f
 
 ---
 
-![Alt Text](images/email-processing.png)
+![Email Processing Arcitecture](images/email-processing.png)
 
 
 
@@ -15,35 +15,75 @@ This project automates the classification and handling of customer emails in a f
 
 The goal is to build a production-grade system that processes customer emails at scale:
 
-- **Classifies emails** as "order request" or "product inquiry" using LLM-based zero-shot classification.
-- **Handles order requests** by extracting products and quantities using LLM, checking availability, updating stock, and sending professional confirmation or fallback emails.
-- **Responds to product inquiries** using semantic RAG search across a vectorized catalog of 100k+ products.
-- **Extracts customer names** from email bodies using LLM, personalizing responses.
-- **Generates response emails** using LLMs with consistent, standardized templates.
+### 🔍 1. Email Classification with LLMs
+
+**Objective:** Determine whether the email is an **order request** or a **product inquiry**.
+
+**How it's done:**
+- A `ChatPromptTemplate` is passed to an LLM (e.g., GPT-4 via LangChain).
+- The model is prompted with the email's subject and body.
+- The model classifies the message into one of two categories:
+  - `product inquiry`
+  - `order request`
 
 ---
 
+### 📦 2. Order Processing with LLMs + RAG
+
+**Objective:** Extract product orders from emails and check availability.
+
+#### ✅ LLM Usage:
+Prompts are sent to the LLM to extract structured data such as:
+- `product_id`
+- `product name`
+- `quantity` (including phrases like `"all remaining stock"`)
+
+#### 🔁 RAG Usage (Fallback):
+- If the product name is vague or mismatched, RAG retrieves the closest product using **FAISS**.
+- Products are ranked based on **vector similarity** with `OpenAIEmbeddings`.
 
 ---
 
-## ✨ Improvements Made
+### 💬 3. Professional Response Generation
 
-- Replaced regex with LLM-based structured extraction for robust product and name parsing.
-- Implemented RAG (FAISS + OpenAI Embeddings) for scalable inquiry handling without token overload.
-- Added fallback recommendations for vague requests.
-- Personalizes emails using extracted customer names.
-- Modular and production-ready response templates.
-- Stock management integrated with product lookup.
+**LLM Usage:**
+- The LLM generates dynamic, polite, and production-ready email responses.
+- Inputs include:
+  - Order status (`created`, `out of stock`)
+  - Product details
+  - Stock left
+  - Customer name (if extracted)
+
+✅ Ensures every customer receives a **coherent and tailored** message.
+
+---
+
+### 🤝 4. Handling Product Inquiries with RAG + LLM
+
+**Objective:** Answer product-related questions (e.g., **price**, **stock**, **season** suitability).
+
+**How it's done:**
+- **RAG** retrieves the most relevant products using **FAISS vector search**.
+- Retrieved metadata (name, price, stock, etc.) is compiled into structured **context**.
+- The context is passed into the LLM prompt to generate **precise and helpful replies**.
 
 ---
 
-## 🤖 LLM and RAG Usage
+### 🧑‍💼 5. Customer Name Extraction with LLM
 
-- **LLM**: Used via LangChain for classification, extraction, and response generation.
-- **RAG**: FAISS vector store + OpenAI embeddings for semantic search on product descriptions and metadata.
-- Prompts are template-driven to ensure consistency, clarity, and control.
+- The LLM parses email text to detect names from patterns like:
+  - `"Thanks, John"`
+  - `"My name is Sarah"`
+- Defaults to `"Customer"` if no name is found.
 
 ---
+
+### 💡 Enhancements Over Traditional Systems
+
+- ✅ **Semantic Search with FAISS** for fuzzy matching of vague product mentions.
+- ✅ **LLM-Driven Response Generation** ensures professionalism without hardcoded templates.
+- ✅ **No Regex Needed** – all logic is handled via LLM prompts.
+- ✅ **Scalability** – Handles catalogs with **100,000+ products** using fast FAISS indexing.
 
 ## 🚀 Getting Started
 
