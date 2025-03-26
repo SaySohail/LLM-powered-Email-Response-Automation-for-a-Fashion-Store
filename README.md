@@ -110,6 +110,3 @@ Will result in:
 ✅ Personalized response email generated  
 ✅ Result saved to spreadsheet
 
----
-
----
