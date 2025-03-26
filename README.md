@@ -7,6 +7,9 @@ This project automates the classification and handling of customer emails in a f
 
 ---
 
+
+
+
 ## 🧠 Description
 
 The goal is to build a production-grade system that processes customer emails at scale:
@@ -19,19 +22,6 @@ The goal is to build a production-grade system that processes customer emails at
 
 ---
 
-## 🏗️ Architecture
-
-```mermaid
-graph TD;
-    A[📧 Incoming Email] --> B[🤖 LLM Classification];
-    B -->|Order Request| C[🛍️ Order Extraction (LLM)];
-    B -->|Product Inquiry| F[RAG Search + Inquiry Response];
-    C --> D[📦 Stock Check];
-    D --> E[✅ Generate Response or ❌ Recommend];
-    F --> G[✉️ Inquiry Response Generation];
-    E --> H[📝 Save to Excel];
-    G --> H
-```
 
 ---
 
